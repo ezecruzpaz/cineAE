@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <%- include('../includes/head') %>
+    <style>
+        #nuevoUsuarioForm {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 20px;
+            z-index: 1000;
+        }
+
+        #cerrarPopupBtn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+        }
+
+        /* Tu estilo aquí */
+    </style>
+</head>
+<header class="header">
+   
+    <input class="menu-btn" type="checkbox" id="menu-btn" />
+    <label class="menu-icon" for="menu-btn"><span class="navicon"></span></label>
+    <ul class="menu">
+      <li>
+        <a class="menu-item" href="/lista-usuarios">
+            Salas
+          </a>
+        
+  
+      </li>
+      <li>
+        <a class="menu-item" href="/Crud-Completo-con-NodeJS-Express-y-MySQL">
+            Lista Usuarios
+            </a>
+    </li>
+      <li>
+        <a href="/lista-Peliculas">Peliculas</a>
+
+      </li>
+      <li>
+        <a class="menu-item" href="/">Cerrar sesion </a>
+    </li>
+      
+      
+     
+    
+  </header>
+  
+<body>
+    <div class="container" style="margin-top: 80px !important">
+        <div class="row justify-content-center mb-5">
+            <div class="col-md-12 mt-2 text-center">
+                <h2 class="title">
+                    Usuarios
+                </h2>
+                <div class="col-md-3">
+                    <label class="invisible">Botón Formulario</label>
+                    <a href="javascript:void(0);" class="btn btn-primary btn-block" onclick="togglePopup()">Añadir Usuario</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+
+        <div id="nuevoUsuarioForm" class="col-md-5 py-3 custom_table mx-auto">
+            <span id="cerrarPopupBtn" onclick="cerrarPopup()">✖</span>
+
+
+
+
+            <form id="formNuevoUsuario" action="/usuarios" method="POST" onsubmit="return validarNuevoUsuario()">
+                <h2 class="text-center title">
+                    Registrar Usuario
+                </h2>
+            
+                <!-- Campos del formulario -->
+                <div class="mb-3">
+                    <label for="nombre_usuario" class="form-label">Nombre de Usuario</label>
+                    <input type="text" name="nombre_usuario" id="nombreUsuario" class="form-control" pattern="[A-Za-z]+" required />
+                </div>
+                <div class="mb-3">
+                    <label for="contrasena_encriptada" class="form-label">Contraseña</label>
+                    <input type="password" name="contrasena_encriptada" id="contrasena" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label for="confirmar_contrasena" class="form-label">Confirmar Contraseña</label>
+                    <input type="password" name="confirmar_contrasena" id="confirmarContrasena" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label for="tipo_usuario">Tipo de Usuario</label>
+                    <select name="tipo_usuario" id="tipoUsuarioSelect" class="form-select" required>
+                        <option value="">Seleccionar tipo de usuario</option>
+                        <option value="super admin">Super Admin</option>
+                        <option value="taquillero">Taquillero</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="estado">Estado</label>
+                    <select name="estado" id="estadoUsuarioSelect" class="form-select" required>
+                        <option value="">Seleccionar estado</option>
+                        <option value="activo">Activo</option>
+                        <option value="inactivo">Inactivo</option>
+                    </select>
+                </div>
+            
+                <div class="d-grid gap-2 col-12 mx-auto mt-4 mb-4">
+                    <button class="btn btn-primary" type="submit">
+                        Registrar Usuario
+                    </button>
+                </div>
+            </form>
+            
+        </div>
+
+        <div id="mensajeNoEncontrado" class="alert alert-warning mt-3" style="display: none;">
+            Usuario no encontrado.
+        </div>
+
+        <!-- Resto de tu código original -->
+
+        <div class="col-md-8 py-3 custom_table mx-auto">
+            <form id="filterForm" class="mb-3">
+                <!-- Buscador -->
+                <div class="input-group mb-2">
+                    <input type="text" id="busquedaUsuario" name="busquedaUsuario" class="form-control" placeholder="Ingrese nombre de usuario">
+                    <button type="button" onclick="filtrarUsuarios()" class="btn btn-outline-secondary">🔎</button>
+                </div>
+
+                <!-- Filtros y Botón para dirigir a otra página -->
+                <div class="row mb-3">
+                    <div class="col-md-3">
+                        <label for="tipoUsuario" class="form-label">Tipo de Usuario</label>
+                        <select id="tipoUsuario" name="Tipo" class="form-select">
+                            <option value="">Tipo</option>
+                            <option value="super admin">Super Admin</option>
+                            <option value="taquillero">Taquillero</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-3">
+                        <label for="estadoUsuario" class="form-label">Estado de Usuario</label>
+                        <select id="estadoUsuario" name="estadoUsuario" class="form-select">
+                            <option value="">Estado</option>
+                            <option value="activo">Activo</option>
+                            <option value="inactivo">Inactivo</option>
+                        </select>
+                    </div>
+                </div>
+            </form>
+            <hr />
+            <!-- Tabla de Usuarios -->
+            <!-- Ajustes en la tabla -->
+            <table id="tablaUsuarios" class="table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Usuario</th>
+                        <th>Tipo</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% let contador=1; %>
+                        <% usuarios.forEach(function(usuario) { %>
+                            <tr>
+                                <th scope="row">
+                                    <%= contador %>
+                                </th>
+                                <td class="nombreUsuario">
+                                    <%= usuario.nombre_usuario %>
+                                </td>
+                                <td class="tipoUsuario">
+                                    <%= usuario.tipo_usuario %>
+                                </td>
+                                <td class="estadoUsuario">
+                                    <%= usuario.estado %>
+                                </td>
+                                <td>
+                                    <span>
+                                        <a class="btn btn-success success_especial" title="Editar datos del Usuario" href="/formulario-actualizar-usuario/<%= usuario.id_usuario %>">
+                                            <i class="bi bi-pencil-square"></i>
+                                        </a>
+                                        <form id="formEliminarUsuario<%= usuario.id_usuario %>" action="/borrar-usuario/<%= usuario.id_usuario %>" method="POST">
+                                            <input type="hidden" name="_method" value="DELETE" />
+                                            <button type="button" class="btn btn-danger" onclick="confirmarEliminarUsuario('<%= usuario.id_usuario %>')">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+                                    </span>
+                                </td>
+                            </tr>
+                            <% contador++; %>
+                                <% }); %>
+                </tbody>
+            </table>
+        </div>
+        <script>
+            function validarNuevoUsuario() {
+                // Validaciones del nuevo usuario
+                var contrasena = document.getElementById('contrasena').value;
+                var confirmarContrasena = document.getElementById('confirmarContrasena').value;
+                var tipoUsuarioSelect = document.getElementById('tipoUsuarioSelect').value;
+                var estadoUsuarioSelect = document.getElementById('estadoUsuarioSelect').value;
+        
+                if (contrasena !== confirmarContrasena) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Las contraseñas no coinciden',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                    return false; // Evita que el formulario se envíe
+                }
+        
+                if (!tipoUsuarioSelect || !estadoUsuarioSelect) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Por favor, selecciona un tipo de usuario y un estado',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                    return false; // Evita que el formulario se envíe
+                }
+        
+                return true; // Envía el formulario si todas las validaciones son exitosas
+            }
+        
+            // Resto del código...
+        </script>
+        <!-- Agrega este enlace al SweetAlert CDN en tu <head> -->
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+        <script>
+
+
+            function togglePopup() {
+                var nuevoUsuarioForm = document.getElementById('nuevoUsuarioForm');
+                nuevoUsuarioForm.style.display = (nuevoUsuarioForm.style.display === 'none' || nuevoUsuarioForm.style.display === '') ? 'block' : 'none';
+            }
+
+            function cerrarPopup() {
+                document.getElementById('nuevoUsuarioForm').style.display = 'none';
+            }
+            function confirmarEliminarUsuario(idUsuario) {
+                Swal.fire({
+                    title: '¿Estás seguro?',
+                    text: 'Esta acción no se puede deshacer.',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Sí, eliminarlo'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Realiza la eliminación solo después de la confirmación
+                        var form = document.getElementById(`formEliminarUsuario${idUsuario}`);
+                        form.submit();
+                    }
+                });
+            }
+            
+            function togglePopup() {
+                var nuevoUsuarioForm = document.getElementById('nuevoUsuarioForm');
+                nuevoUsuarioForm.style.display = (nuevoUsuarioForm.style.display === 'none' || nuevoUsuarioForm.style.display === '') ? 'block' : 'none';
+            }
+
+            function cerrarPopup() {
+                document.getElementById('nuevoUsuarioForm').style.display = 'none';
+            }
+
+            function validarNuevoUsuario() {
+                // Validaciones del nuevo usuario
+                var contrasena = document.getElementById('contrasena').value;
+                var confirmarContrasena = document.getElementById('confirmarContrasena').value;
+
+                if (contrasena !== confirmarContrasena) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Las contraseñas no coinciden',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                    return false; // Evita que el formulario se envíe
+                
+
+                };
+            }
+            function filtrarUsuarios() {
+                var tipoUsuario = document.getElementById('tipoUsuario').value.toLowerCase();
+                var estadoUsuario = document.getElementById('estadoUsuario').value.toLowerCase();
+                var busquedaUsuario = document.getElementById('busquedaUsuario').value.trim().toLowerCase();
+                var regex = /^[A-Za-z]+$/;
+
+                    if (!regex.test(busquedaUsuario)) {
+                        // Mostrar SweetAlert para el mensaje de error
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Ingrese solo letras en el campo de búsqueda.'
+                        });
+
+                        // Limpiar el campo de búsqueda
+                        busquedaUsuarioInput.value = '';
+
+                        return;
+                    }
+
+                var tabla = document.getElementById('tablaUsuarios');
+                var filas = tabla.getElementsByTagName('tr');
+
+                var usuariosEncontrados = false;
+
+                for (var i = 1; i < filas.length; i++) {
+                    var mostrarFila = true;
+
+                    var nombreUsuario = filas[i].getElementsByClassName('nombreUsuario')[0].textContent.trim().toLowerCase();
+                    var tipoUsuarioFila = filas[i].getElementsByClassName('tipoUsuario')[0].textContent.trim().toLowerCase();
+                    var estadoUsuarioFila = filas[i].getElementsByClassName('estadoUsuario')[0].textContent.trim().toLowerCase();
+
+                    if (tipoUsuario && tipoUsuarioFila !== tipoUsuario) {
+                        mostrarFila = false;
+                    }
+
+                    if (estadoUsuario && estadoUsuarioFila !== estadoUsuario) {
+                        mostrarFila = false;
+                    }
+
+                    if (busquedaUsuario && nombreUsuario.indexOf(busquedaUsuario) === -1) {
+                        mostrarFila = false;
+                    }
+
+                    filas[i].style.display = mostrarFila ? '' : 'none';
+
+                    if (mostrarFila) {
+                        usuariosEncontrados = true;
+                    }
+                }
+
+                // Mostrar mensaje si no se encontraron usuarios usando SweetAlert
+                if (!usuariosEncontrados) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Usuario no encontrado',
+                        showConfirmButton: false,
+                        timer: 1000
+                    }).then(() => {
+                        // Recargar la página después de 1.5 segundos
+                        setTimeout(() => {
+                            location.reload();
+                        }, 450);
+                    });
+                }
+            }
+            
+        </script>
+    </div>
+
+</body>
+
+</html>

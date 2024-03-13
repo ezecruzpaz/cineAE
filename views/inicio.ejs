@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <%- include('includes/head') %>
+    <!-- Agrega el enlace al archivo de SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+
+<body>
+
+    <main class="content-wrapper mt-5" style="margin-top: 80px !important">
+        <div class="container">
+            <div class="row justify-content-md-center mb-5">
+                <div class="col-md-6 mt-5 text-center">
+                    <h2 class="text-center title">Inicio de Sesión</h2>
+                    <% if (typeof message !=='undefined' ) { %>
+                    <!-- Elimina el mensaje anterior y maneja las alertas de SweetAlert directamente en JavaScript -->
+                    <script>
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: '<%= message %>',
+                        });
+                    </script>
+                    <% } %>
+                    <!-- Formulario para Iniciar Sesión -->
+                    <form action="/inicio" method="POST">
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Nombre de Usuario</label>
+                            <input type="text" name="username" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Contraseña</label>
+                            <input type="password" name="password" class="form-control" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Iniciar Sesión</button>
+                    </form>
+
+
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <%- include('includes/scripts') %>
+</body>
+<script>
+    import Swal from 'sweetalert2';
+import { pool } from './tuArchivoDeConexion'; // Ajusta la importación según tu estructura
+
+export async function autenticarUsuario(req, res) {
+  const { username, password } = req.body;
+
+  try {
+    // Consulta la base de datos para verificar las credenciales
+    const usuario = await obtenerUsuarioPorNombre(username);
+
+    if (!usuario) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Usuario no encontrado',
+        text: 'No se encontró un usuario con el nombre proporcionado',
+      });
+      return res.render('inicio', { message: 'Usuario no encontrado' });
+    }
+
+    if (password !== usuario.contrasena_encriptada) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Contraseña incorrecta',
+        text: 'La contraseña proporcionada no es válida',
+      });
+      return res.render('inicio', { message: 'Contraseña incorrecta' });
+    }
+
+    // Autenticación exitosa, establecer la sesión
+    req.session.usuario = usuario;
+    req.session.tipoUsuario = usuario.tipo_usuario;
+
+    // Mostrar mensaje de bienvenida con SweetAlert
+    Swal.fire({
+      icon: 'success',
+      title: `¡Bienvenido, ${usuario.nombre_usuario}!`,
+      text: 'Has iniciado sesión exitosamente.',
+    });
+
+    // Redireccionar al usuario según su tipo
+    if (usuario.tipo_usuario === 'super admin') {
+      // Redirección exitosa para un super admin
+      res.redirect('/Crud-Completo-con-NodeJS-Express-y-MySQL');
+    } else if (usuario.tipo_usuario === 'taquillero') {
+      // Redirección exitosa para un taquillero
+      res.redirect('/lista-usuarios');
+    } else {
+      // Tipo de usuario no válido
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Tipo de usuario no válido',
+      });
+      res.render('inicio', { message: 'Tipo de usuario no válido' });
+    }
+  } catch (error) {
+    console.error(error);
+    // Error al autenticar usuario
+    Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: 'Hubo un problema al autenticar al usuario. Por favor, inténtalo de nuevo.',
+    });
+    res.status(500).json({ error: 'Error al autenticar usuario' });
+  }
+};
+
+</script>
+
+</html>

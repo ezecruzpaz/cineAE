@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <%- include('../includes/head') %>
+
+</head>
+
+<body>
+    <div class="container">
+        <div class="row justify-content-center mt-5">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        Nuevo Sala
+                    </div>
+                    <div class="card-body">
+                        <!-- Formulario para nueva sala -->
+                        <form id="nuevaSalaForm" action="/lista-Peliculas" method="POST"> <!-- Cambia la acción del formulario -->
+                            <div class="mb-3">
+                                <label for="nombreSala" class="form-label">Nombre</label>
+                                <input type="text" class="form-control" id="nombreSala" name="nombreSala">
+                            </div>
+                            <div class="mb-3">
+                                <label for="sinopsisSala" class="form-label">Sinopsis</label>
+                                <textarea class="form-control" id="sinopsisSala" name="sinopsisSala"
+                                    rows="3"></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="duracionSala" class="form-label">Duración</label>
+                                <input type="text" class="form-control" id="duracionSala" name="duracionSala">
+                            </div>
+                            <div class="mb-3">
+                                <label for="generoSala" class="form-label">Género</label>
+                                <select id="generoSala" name="generoSala" class="form-select">
+                                    <option value="accion">Acción</option>
+                                    <option value="comedia">Comedia</option>
+                                    <option value="drama">Drama</option>
+                                    <!-- Agrega más opciones según sea necesario -->
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="imagenSala" class="form-label">Imagen</label>
+                                <input type="text" class="form-control" id="imagenSala" name="imagenSala">
+                            </div>
+                            <div class="mb-3">
+                                <label for="precioSala" class="form-label">Precio</label>
+                                <input type="text" class="form-control" id="precioSala" name="precioSala">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Guardar</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

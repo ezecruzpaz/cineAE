@@ -1,0 +1,149 @@
+body {
+  margin: 0;
+  background-color: #0c0c0c;
+  color: #fff;
+  font-family: "Ubuntu", sans-serif;
+}
+
+.title {
+  color: #e50914;
+  font-size: 50px;
+  font-weight: 900;
+}
+
+form {
+  background-color: #1f1f1f;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.custom_table {
+  background-color: #1f1f1f;
+  box-shadow: 0px 2px 20px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.container {
+  width: 90%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Estilos para el botón + y el botón de búsqueda */
+.btn-primary,
+.btn-outline-secondary {
+  background-color: #e50914;
+  color: #fff;
+  border: none;
+}
+
+.btn-primary:hover,
+.btn-outline-secondary:hover {
+  background-color: #a80010;
+}
+
+/* Estilos para los botones de acción en la tabla */
+.btn-success,
+.btn-danger {
+  background-color: #25a200;
+  color: #fff;
+  border: none;
+}
+
+.btn-success:hover,
+.btn-danger:hover {
+  background-color: #187d00;
+}
+
+/* Estilos para el formulario emergente */
+#nuevoUsuarioForm {
+  background-color: #1f1f1f;
+  color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+#cerrarPopupBtn {
+  color: #e50914;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+/* Estilos para la alerta de usuario no encontrado */
+#mensajeNoEncontrado {
+  background-color: #1f1f1f;
+  border: 1px solid #e50914;
+  color: #e50914;
+  border-radius: 5px;
+  padding: 10px;
+  margin-top: 20px;
+}
+
+/* Estilos para SweetAlert */
+.swal2-title {
+  color: #e50914;
+}
+
+.swal2-confirm,
+.swal2-cancel {
+  background-color: #e50914;
+  color: #fff;
+  border: none;
+}
+
+.swal2-confirm:hover,
+.swal2-cancel:hover {
+  background-color: #a80010;
+}
+/* Estilos para el texto en la tabla */
+.table th,
+.table td {
+  color: #fff; /* Color del texto en blanco */
+}
+
+/* Estilos para los botones de acción en la tabla */
+.btn-success,
+.btn-danger {
+  background-color: #25a200;
+  color: #fff;
+  border: none;
+  margin: 0; /* Elimina el margen en los botones */
+  padding: 5px 10px; /* Ajusta el padding de los botones */
+  cursor: pointer; /* Cambia el cursor a pointer para indicar que es interactivo */
+  transition: background-color 0.3s; /* Agrega una transición suave al color de fondo */
+}
+
+.btn-success:hover,
+.btn-danger:hover {
+  background-color: #187d00;
+}
+
+/* Alinea los botones al centro */
+.table td span {
+  display: flex;
+  justify-content: space-between; /* Cambiado a 'space-between' para separar los botones */
+  align-items: center; /* Alinea verticalmente los elementos dentro del contenedor flex */
+}
+
+/* Estilos adicionales para SweetAlert */
+.swal2-title,
+.swal2-confirm,
+.swal2-cancel {
+  color: #e50914;
+}
+
+.swal2-confirm:hover,
+.swal2-cancel:hover {
+  background-color: #a80010;
+}
+
+/* Estilos para los contenedores de editar y eliminar */
+#tablaUsuarios .btn-success,
+#tablaUsuarios .btn-danger {
+  width: 50px; /* Ajusta el ancho de los botones de editar y eliminar */
+  margin: 0 5px; /* Agrega un margen entre los botones */
+}
+
